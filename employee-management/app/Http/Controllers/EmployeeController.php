@@ -15,18 +15,23 @@ class EmployeeController extends Controller
 
     // Store a new employee
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees',
-            'position' => 'required|string|max:255',
-            'salary' => 'required|numeric|min:0',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:employees',
+        'position' => 'required|string|max:255',
+        'salary' => 'required|numeric|min:0',
+    ]);
 
-        $employee = Employee::create($request->all());
+    // Create new employee
+    $employee = Employee::create($request->all());
 
-        return Redirect::route('dashboard')->with('success', 'Employee added successfully.');
-    }
+    // Return JSON response with 201 status
+    return response()->json([
+        'message' => 'Employee added successfully',
+        'employee' => $employee
+    ], 201);
+}
 
     // Get a single employee
     public function show(Employee $employee)
@@ -50,10 +55,17 @@ class EmployeeController extends Controller
     }
 
     // Delete an employee
-    public function destroy(Employee $employee)
-    {
-        $employee->delete();
-
-        return response()->json(['message' => 'Employee deleted successfully']);
+    public function destroy($id)
+{
+    $employee = Employee::find($id);
+    
+    if (!$employee) {
+        return response()->json(['message' => 'Employee not found'], 404);
     }
+
+    $employee->delete();
+
+    return response()->json(['message' => 'Employee deleted successfully']);
+}
+
 }
