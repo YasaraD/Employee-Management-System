@@ -25,7 +25,7 @@ class EmployeeController extends Controller
 
         $employee = Employee::create($request->all());
 
-        return response()->json($employee, 201);
+        return Redirect::route('dashboard')->with('success', 'Employee added successfully.');
     }
 
     // Get a single employee
