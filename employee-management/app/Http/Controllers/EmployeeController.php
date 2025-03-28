@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
+
 
 class EmployeeController extends Controller
 {
@@ -14,8 +17,7 @@ class EmployeeController extends Controller
     }
 
     // Store a new employee
-    public function store(Request $request)
-{
+    public function store(Request $request){
     $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:employees',
@@ -31,7 +33,7 @@ class EmployeeController extends Controller
         'message' => 'Employee added successfully',
         'employee' => $employee
     ], 201);
-}
+    }
 
     // Get a single employee
     public function show(Employee $employee)
@@ -39,24 +41,31 @@ class EmployeeController extends Controller
         return response()->json($employee);
     }
 
-    // Update an employee
-    public function update(Request $request, Employee $employee)
+    // Show the Edit Employee Page
+    public function edit($id)
+    {
+        $employee = Employee::findOrFail($id);
+        return Inertia::render('employees/EditEmployee', ['employee' => $employee]);
+    }
+
+    // Update Employee
+    public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email,' . $employee->id,
+            'email' => 'required|email|unique:employees,email,' . $id,
             'position' => 'required|string|max:255',
             'salary' => 'required|numeric|min:0',
         ]);
 
+        $employee = Employee::findOrFail($id);
         $employee->update($request->all());
 
-        return response()->json($employee);
+        return Redirect::route('dashboard')->with('success', 'Employee updated successfully.');
     }
 
     // Delete an employee
-    public function destroy($id)
-{
+    public function destroy($id){
     $employee = Employee::find($id);
     
     if (!$employee) {
@@ -66,6 +75,6 @@ class EmployeeController extends Controller
     $employee->delete();
 
     return response()->json(['message' => 'Employee deleted successfully']);
-}
+    }
 
 }

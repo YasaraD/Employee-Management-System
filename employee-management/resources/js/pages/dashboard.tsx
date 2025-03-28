@@ -1,10 +1,9 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "@inertiajs/react";
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -84,9 +83,14 @@ export default function Dashboard() {
                                     <td className="px-6 py-4 border-b text-black">{employee.position}</td>
                                     <td className="px-6 py-4 border-b text-black">${employee.salary}</td>
                                     <td className="px-6 py-4 border-b text-center space-x-2">
-                                        <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">
+                                        {/* Update Button */}
+                                        <Link 
+                                            href={`/employees/${employee.id}/edit`}
+                                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+                                        >
                                             Update
-                                        </button>
+                                        </Link>
+                                        {/* Delete Button */}
                                         <button
                                             className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
                                             onClick={() => handleDelete(employee.id)}
